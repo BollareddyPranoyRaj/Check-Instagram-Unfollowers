@@ -1,45 +1,75 @@
-🚀 InstaMOOZ Check
-The Futuristic Relationship Analytics Dashboard
+# 🚀 InstaMOOZ Check  
+### Private Instagram Relationship Analyzer (Offline & Secure)
 
-InstaMOOZ Check is a privacy-focused, local-first web tool designed to give you instant insights into your Instagram connections. No login required, no APIs, and 100% offline security.
+**InstaMOOZ Check** is a **local-first, privacy-safe web tool** that instantly analyzes your Instagram followers & following — **no login, no API, no internet needed**.
+Your data **never leaves your device**.
 
-📂 How to Get Your Data
-To use InstaMOOZ, you first need your official data from Instagram:
+---
 
-Request Download: Go to your Instagram Settings → Accounts Center → Your Information and Permissions.
+## 🔒 Why InstaMOOZ?
+- ✅ 100% Offline & Secure  
+- 🚫 No Instagram Login  
+- 🧠 Smart Auto-Analysis  
+- ⚡ Instant Results  
+- 🖥️ Works in Any Modern Browser  
 
-Select Information: Search for "Download Your Information" and select "Download or Transfer Information."
+---
 
-Choose Format: Select "Some of your information" and ensure "Followers and Following" is checked.
+## 📥 Get Your Instagram Data
+1. Open **Instagram → Settings → Accounts Center**
+2. Go to **Your Information & Permissions**
+3. Tap **Download Your Information**
+4. Choose **Some of your information**
+5. Select **Followers and Following**
+6. Set:
+   - **Format:** HTML  
+   - **Delivery:** Download to device
+7. Download the **ZIP file** from the email Instagram sends
 
-Delivery: Choose "Download to device", set the Format to HTML, and enter your Email.
+---
 
-Retrieve: Instagram will email you a link once the file is ready. Download the .zip file.
+## 🛠️ How to Use InstaMOOZ
+1. **Extract** the downloaded ZIP file  
+2. Open **`InstaMOOZ.html`** in your browser  
+3. Click **Upload Folder**  
+4. Select the extracted folder  
+   *(starts with `instagram-username`)*
+5. 🎉 Instantly see your analytics dashboard
 
-🛠️ How to Use InstaMOOZ
-Once you have your data, follow these steps to see the magic:
+---
 
-Extract: Unzip the downloaded file so it becomes a regular folder.
+## 🔍 What You’ll See
+- **⭐ Idols** → You follow them, they don’t follow back  
+- **❤️ Fans** → They follow you, you don’t follow back  
+- **🤝 Mutuals** → Both follow each other  
 
-Launch: Open InstaMOOZ.html in any modern web browser.
+All categories are **auto-sorted & searchable**.
 
-Upload: Click "Upload Folder" and select the top-level folder you just unzipped (the one starting with instagram-username).
+---
 
-Analyze: Use the futuristic dashboard to filter between:
+## ✨ Key Features
+- 🔐 **Privacy First** – Data stays on your device  
+- 🧹 **Auto Cleanup** – Fixes Instagram’s 2025 username format  
+- ⚡ **Smart Sorting** – Important profiles appear first  
+- 🔎 **Live Search** – Find anyone instantly  
+- 🎨 **Futuristic UI** – Clean, smooth, modern design  
 
-Idols: People you follow who don't follow you back.
+---
 
-Fans: People who follow you but you don't follow back.
+## 🧠 Built With
+- HTML + CSS + JavaScript  
+- Zero APIs  
+- Zero Tracking  
+- Zero Cloud Dependency  
 
-Mutuals: Your true community.
+---
 
-✨ Key Features
-Privacy First: Your data never leaves your computer.
+## 🧩 Part of MOOZ
+**InstaMOOZ Check** is proudly built under **MOOZ Services** —  
+a student-led initiative creating **future-ready, privacy-focused tools**.
 
-Auto-Cleaning: Automatically removes "u" prefixes and underscores from Instagram's 2025 data format.
+---
 
-Smart Sorting: Unfollowers, Fans, and Mutuals are automatically sorted to the top for easy viewing.
-
-Live Search: Find any username instantly across thousands of records.
-
-Powered by MOOZ Services Part of the MOOZ family of futuristic student-led tools.
+## 🚀 Start Analyzing
+Just open the file.  
+No setup. No risk. No compromise.
