@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InstaMOOZ | Instagram Analytics</title>
+    <title>InstaMOOZ | Pro Analytics</title>
     <style>
         :root {
-            --bg: #0b0f19;
-            --card-bg: #161b2a;
+            --bg: #000000;
+            --card-bg: #0a0e1a;
             --border: #2d3748;
             --text-main: #f8fafc;
             --text-dim: #94a3b8;
@@ -18,6 +18,53 @@
             --accent-glow: rgba(56, 189, 248, 0.4);
         }
 
+        /* --- FAST ANIME SPLASH SCREEN (2s Total) --- */
+        #splash-screen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        /* Fast Moon Rise */
+        .moon {
+            width: 100px;
+            height: 100px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 50px #fff, 0 0 100px rgba(56, 189, 248, 0.4);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: moon-rise 1s ease-out forwards;
+        }
+
+        /* Fast Shimmering MOOZ */
+        .mooz-logo-anime {
+            margin-top: 25px;
+            font-size: 55px;
+            font-weight: 900;
+            letter-spacing: 15px;
+            color: transparent;
+            background: linear-gradient(to right, #000 20%, #fff 50%, #000 80%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            opacity: 0;
+            animation: text-reveal 0.8s ease-in-out forwards 0.5s, sweep 1.5s linear infinite;
+        }
+
+        @keyframes moon-rise { to { opacity: 1; transform: translateY(0); } }
+        @keyframes text-reveal { to { opacity: 1; } }
+        @keyframes sweep { to { background-position: 200% center; } }
+
+        /* --- MAIN DASHBOARD STYLES --- */
         * { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 
         body {
@@ -31,7 +78,7 @@
         }
 
         .dashboard-header {
-            background: rgba(22, 27, 42, 0.8);
+            background: rgba(22, 27, 42, 0.9);
             backdrop-filter: blur(15px);
             padding: 25px 40px;
             border-radius: 28px;
@@ -55,7 +102,6 @@
         }
         .search-box:focus { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
 
-        /* --- FUTURISTIC BUTTONS --- */
         .btn-group { margin-top: 20px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
         .btn-action {
@@ -70,36 +116,11 @@
             font-size: 13px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            overflow: hidden;
             box-shadow: 0 4px 0px rgba(0,0,0,0.2);
         }
 
-        /* Hover Glow & Lift */
-        .btn-action:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 8px 20px var(--accent-glow);
-            filter: brightness(1.1);
-        }
+        .btn-action:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 8px 20px var(--accent-glow); }
 
-        /* Click Ripple/Press Effect */
-        .btn-action:active {
-            transform: translateY(1px) scale(0.98);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-        }
-
-        .btn-unfollow { background: var(--danger); color: white; }
-        .btn-unfollow:hover { box-shadow: 0 8px 20px rgba(244, 63, 94, 0.4); }
-
-        .btn-mutual { background: var(--success); color: white; }
-        .btn-mutual:hover { box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4); }
-
-        .btn-fans { background: var(--warning); color: #000; }
-        .btn-fans:hover { box-shadow: 0 8px 20px rgba(251, 191, 36, 0.4); }
-
-        .btn-clear { background: #475569; color: white; border: 1px solid #64748b; }
-        .btn-clear:hover { box-shadow: 0 8px 20px rgba(100, 116, 139, 0.4); }
-
-        /* --- DASHBOARD LAYOUT --- */
         .container {
             display: flex; gap: 20px;
             width: 100%; max-width: 1200px;
@@ -110,20 +131,16 @@
             flex: 1; background: var(--card-bg);
             border-radius: 24px; border: 1px solid var(--border);
             display: flex; flex-direction: column; overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         }
 
         .header-label {
             padding: 18px; background: rgba(255,255,255,0.03);
             border-bottom: 1px solid var(--border);
             font-weight: 800; text-align: center;
-            letter-spacing: 1px;
             color: var(--text-dim);
         }
 
-        .count { background: var(--accent); color: #000; font-size: 11px; padding: 2px 10px; border-radius: 20px; margin-left: 10px; }
-
-        .list { padding: 15px; margin: 0; list-style: none; overflow-y: auto; flex-grow: 1; scrollbar-width: thin; }
+        .list { padding: 15px; margin: 0; list-style: none; overflow-y: auto; flex-grow: 1; }
 
         .item {
             padding: 14px 18px; margin-bottom: 10px;
@@ -133,62 +150,69 @@
             border: 1px solid transparent;
         }
 
-        .item:hover { background: rgba(255,255,255,0.05); transform: translateX(5px); }
-
         .item.unfollower-card { border-color: var(--danger); background: rgba(244, 63, 94, 0.1); color: #ff8095; }
         .item.mutual-card { border-color: var(--success); background: rgba(16, 185, 129, 0.1); color: #86efac; }
         .item.fan-card { border-color: var(--warning); background: rgba(251, 191, 36, 0.1); color: #fde047; }
 
-        input[type="file"] { display: none; }
+        input[type="file"], button[style*="display: none"] { display: none; }
     </style>
 </head>
 <body>
 
+    <div id="splash-screen">
+        <div class="moon"></div>
+        <div class="mooz-logo-anime">MOOZ</div>
+    </div>
+
     <div class="dashboard-header">
         <h1 style="margin:0; font-size: 28px; letter-spacing: 2px; color: var(--accent);">InstaMOOZ Check</h1>
-        <p style="color: var(--text-dim); font-size: 13px; margin: 5px 0 0 0;">Futuristic Audience Relationship Engine</p>
-        
         <input type="text" id="searchInput" class="search-box" placeholder="Target username scan...">
         
         <div class="btn-group">
             <button class="btn-action" onclick="document.getElementById('folderInput').click()">Upload Folder</button>
-            <button id="btnUnfollowers" class="btn-action btn-unfollow" style="display:none">View Unfollowers</button>
-            <button id="btnFans" class="btn-action btn-fans" style="display:none">View Fans</button>
-            <button id="btnMutual" class="btn-action btn-mutual" style="display:none">View Mutuals</button>
-            <button id="btnClear" class="btn-action btn-clear" style="display:none">Reset View</button>
+            <button id="btnUnfollowers" class="btn-action" style="background:var(--danger); color:white; display:none;">View Idols</button>
+            <button id="btnFans" class="btn-action" style="background:var(--warning); color:black; display:none;">View Fans</button>
+            <button id="btnMutual" class="btn-action" style="background:var(--success); color:white; display:none;">View Mutuals</button>
+            <button id="btnClear" class="btn-action" style="background:#475569; color:white; display:none;">Reset View</button>
         </div>
         <input type="file" id="folderInput" webkitdirectory directory multiple>
     </div>
 
     <div class="container">
         <div class="column">
-            <div class="header-label">FOLLOWERS <span id="c-followers" class="count">0</span></div>
+            <div class="header-label">FOLLOWERS <span id="c-followers">0</span></div>
             <ul id="l-followers" class="list"></ul>
         </div>
         <div class="column">
-            <div class="header-label">FOLLOWING <span id="c-following" class="count">0</span></div>
+            <div class="header-label">FOLLOWING <span id="c-following">0</span></div>
             <ul id="l-following" class="list"></ul>
         </div>
     </div>
 
     <script>
+        // FAST SPLASH REMOVAL (1.5s Animation + 0.5s Fade)
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                setTimeout(() => splash.remove(), 800);
+            }, 1500);
+        });
+
         let followerList = [];
         let followingList = [];
 
         function cleanFollowing(name) {
             if (!name) return "";
-            let val = name.replace('u', ''); //
-            if (val.charAt(0) === '_') val = val.substring(1); //
+            let val = name.replace('u', ''); 
+            if (val.charAt(0) === '_') val = val.substring(1); 
             return val;
         }
 
         document.getElementById('folderInput').addEventListener('change', async (e) => {
             const files = Array.from(e.target.files);
-            const fFiles = files.filter(f => f.name.toLowerCase().includes('follower') && f.name.endsWith('.html'));
-            const gFiles = files.filter(f => f.name.toLowerCase().includes('following') && f.name.endsWith('.html'));
-
-            followerList = await extractAll(fFiles, false);
-            followingList = await extractAll(gFiles, true);
+            followerList = await extractAll(files.filter(f => f.name.includes('follower')), false);
+            followingList = await extractAll(files.filter(f => f.name.includes('following')), true);
 
             render(followerList, 'l-followers', 'c-followers');
             render(followingList, 'l-following', 'c-following');
@@ -206,61 +230,41 @@
                         names.add(shouldClean ? cleanFollowing(user) : user);
                     }
                 });
-                if (names.size === 0) {
-                    doc.querySelectorAll('div._a6-p, div._a706, td').forEach(el => {
-                        let val = el.textContent.trim();
-                        if (val && !val.includes(' ')) names.add(shouldClean ? cleanFollowing(val) : val);
-                    });
-                }
             }
             return Array.from(names).sort();
         }
 
         function render(data, listId, countId, statusMap = {}) {
-            const list = document.getElementById(listId);
             document.getElementById(countId).innerText = data.length;
-            
-            const sortedData = [...data].sort((a, b) => {
-                const aStatus = statusMap[a] ? 1 : 0;
-                const bStatus = statusMap[b] ? 1 : 0;
-                return bStatus - aStatus; //
-            });
-
-            list.innerHTML = sortedData.map(name => {
-                const cssClass = statusMap[name] || '';
-                return `<li class="item ${cssClass}">@${name}</li>`;
-            }).join('');
-            
-            list.scrollTop = 0; //
+            const sorted = [...data].sort((a, b) => (statusMap[b] ? 1 : 0) - (statusMap[a] ? 1 : 0));
+            document.getElementById(listId).innerHTML = sorted.map(n => `<li class="item ${statusMap[n]||''}">@${n}</li>`).join('');
+            document.getElementById(listId).scrollTop = 0;
         }
+
+        document.getElementById('btnUnfollowers').addEventListener('click', () => {
+            let map = {}; followingList.forEach(u => { if(!followerList.includes(u)) map[u] = 'unfollower-card'; });
+            render(followingList, 'l-following', 'c-following', map);
+        });
+
+        document.getElementById('btnFans').addEventListener('click', () => {
+            let map = {}; followerList.forEach(u => { if(!followingList.includes(u)) map[u] = 'fan-card'; });
+            render(followerList, 'l-followers', 'c-followers', map);
+        });
+
+        document.getElementById('btnMutual').addEventListener('click', () => {
+            let map = {}; followingList.forEach(u => { if(followerList.includes(u)) map[u] = 'mutual-card'; });
+            render(followingList, 'l-following', 'c-following', map);
+        });
 
         document.getElementById('btnClear').addEventListener('click', () => {
             render(followerList, 'l-followers', 'c-followers', {});
             render(followingList, 'l-following', 'c-following', {});
         });
 
-        document.getElementById('btnUnfollowers').addEventListener('click', () => {
-            let map = {};
-            followingList.forEach(u => { if(!followerList.includes(u)) map[u] = 'unfollower-card'; });
-            render(followingList, 'l-following', 'c-following', map); //
-        });
-
-        document.getElementById('btnFans').addEventListener('click', () => {
-            let map = {};
-            followerList.forEach(u => { if(!followingList.includes(u)) map[u] = 'fan-card'; });
-            render(followerList, 'l-followers', 'c-followers', map); //
-        });
-
-        document.getElementById('btnMutual').addEventListener('click', () => {
-            let map = {};
-            followingList.forEach(u => { if(followerList.includes(u)) map[u] = 'mutual-card'; });
-            render(followingList, 'l-following', 'c-following', map); //
-        });
-
         document.getElementById('searchInput').addEventListener('input', (e) => {
             const term = e.target.value.toLowerCase();
             document.querySelectorAll('.item').forEach(item => {
-                item.style.display = item.textContent.toLowerCase().includes(term) ? 'flex' : 'none'; //
+                item.style.display = item.textContent.toLowerCase().includes(term) ? 'flex' : 'none';
             });
         });
     </script>
