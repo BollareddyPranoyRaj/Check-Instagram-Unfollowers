@@ -3,22 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instagram Connections | Final Pro</title>
+    <title>InstaMOOZ | Instagram Analytics</title>
     <style>
         :root {
-            --bg: #0f172a;
-            --card-bg: #1e293b;
-            --border: #334155;
+            --bg: #0b0f19;
+            --card-bg: #161b2a;
+            --border: #2d3748;
             --text-main: #f8fafc;
             --text-dim: #94a3b8;
             --accent: #38bdf8;
             --danger: #f43f5e;
+            --success: #10b981;
+            --warning: #fbbf24;
+            --accent-glow: rgba(56, 189, 248, 0.4);
         }
 
-        * { box-sizing: border-box; transition: all 0.2s ease; }
+        * { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 
         body {
-            font-family: 'Inter', -apple-system, sans-serif;
+            font-family: 'Inter', system-ui, sans-serif;
             background-color: var(--bg);
             color: var(--text-main);
             margin: 0; padding: 20px;
@@ -27,90 +30,143 @@
             overflow: hidden;
         }
 
-        .upload-card {
-            background: var(--card-bg);
-            padding: 20px 40px;
-            border-radius: 20px;
+        .dashboard-header {
+            background: rgba(22, 27, 42, 0.8);
+            backdrop-filter: blur(15px);
+            padding: 25px 40px;
+            border-radius: 28px;
             border: 1px solid var(--border);
             text-align: center; width: 100%;
-            max-width: 700px; margin-bottom: 20px;
+            max-width: 950px; margin-bottom: 25px;
             flex-shrink: 0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
         }
 
+        .search-box {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--border);
+            padding: 14px 22px;
+            border-radius: 14px;
+            color: white;
+            margin-top: 18px;
+            font-size: 14px;
+            outline: none;
+        }
+        .search-box:focus { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
+
+        /* --- FUTURISTIC BUTTONS --- */
+        .btn-group { margin-top: 20px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
         .btn-action {
+            position: relative;
             background: var(--accent);
             color: #000;
-            padding: 12px 24px;
-            border-radius: 10px;
-            font-weight: 700;
+            padding: 10px 22px;
+            border-radius: 12px;
+            font-weight: 800;
             cursor: pointer;
             border: none;
-            margin: 10px 5px;
-            font-size: 14px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            overflow: hidden;
+            box-shadow: 0 4px 0px rgba(0,0,0,0.2);
+        }
+
+        /* Hover Glow & Lift */
+        .btn-action:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 20px var(--accent-glow);
+            filter: brightness(1.1);
+        }
+
+        /* Click Ripple/Press Effect */
+        .btn-action:active {
+            transform: translateY(1px) scale(0.98);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
 
         .btn-unfollow { background: var(--danger); color: white; }
+        .btn-unfollow:hover { box-shadow: 0 8px 20px rgba(244, 63, 94, 0.4); }
 
+        .btn-mutual { background: var(--success); color: white; }
+        .btn-mutual:hover { box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4); }
+
+        .btn-fans { background: var(--warning); color: #000; }
+        .btn-fans:hover { box-shadow: 0 8px 20px rgba(251, 191, 36, 0.4); }
+
+        .btn-clear { background: #475569; color: white; border: 1px solid #64748b; }
+        .btn-clear:hover { box-shadow: 0 8px 20px rgba(100, 116, 139, 0.4); }
+
+        /* --- DASHBOARD LAYOUT --- */
         .container {
             display: flex; gap: 20px;
-            width: 100%; max-width: 1100px;
+            width: 100%; max-width: 1200px;
             flex-grow: 1; min-height: 0;
-            margin-bottom: 10px;
         }
 
         .column {
             flex: 1; background: var(--card-bg);
-            border-radius: 16px; border: 1px solid var(--border);
+            border-radius: 24px; border: 1px solid var(--border);
             display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         }
 
-        .header {
-            padding: 15px; background: rgba(255,255,255,0.05);
+        .header-label {
+            padding: 18px; background: rgba(255,255,255,0.03);
             border-bottom: 1px solid var(--border);
-            font-weight: 700; text-align: center;
-            display: flex; justify-content: center; align-items: center; gap: 10px;
+            font-weight: 800; text-align: center;
+            letter-spacing: 1px;
+            color: var(--text-dim);
         }
 
-        .count { background: var(--accent); color: #000; font-size: 11px; padding: 2px 8px; border-radius: 12px; }
+        .count { background: var(--accent); color: #000; font-size: 11px; padding: 2px 10px; border-radius: 20px; margin-left: 10px; }
 
-        .list { padding: 15px; margin: 0; list-style: none; overflow-y: auto; flex-grow: 1; }
+        .list { padding: 15px; margin: 0; list-style: none; overflow-y: auto; flex-grow: 1; scrollbar-width: thin; }
 
         .item {
-            padding: 10px 15px; margin-bottom: 6px;
+            padding: 14px 18px; margin-bottom: 10px;
             background: rgba(255,255,255,0.02);
-            border-radius: 8px; font-size: 13.5px;
-            border: 1px solid transparent;
+            border-radius: 12px; font-size: 13.5px;
             display: flex; align-items: center;
+            border: 1px solid transparent;
         }
 
-        .item::before { content: '@'; color: var(--accent); margin-right: 8px; opacity: 0.6; font-weight: bold; }
+        .item:hover { background: rgba(255,255,255,0.05); transform: translateX(5px); }
 
-        .item.highlight { 
-            border-color: var(--danger); 
-            background: rgba(244, 63, 94, 0.15); 
-        }
+        .item.unfollower-card { border-color: var(--danger); background: rgba(244, 63, 94, 0.1); color: #ff8095; }
+        .item.mutual-card { border-color: var(--success); background: rgba(16, 185, 129, 0.1); color: #86efac; }
+        .item.fan-card { border-color: var(--warning); background: rgba(251, 191, 36, 0.1); color: #fde047; }
 
-        .error { color: var(--danger); display: none; padding: 10px; font-size: 13px; }
+        input[type="file"] { display: none; }
     </style>
 </head>
 <body>
 
-    <div class="upload-card">
-        <h2 style="margin:0 0 10px 0;">Instagram Connections</h2>
-        <input type="file" id="folderInput" webkitdirectory directory multiple style="display:none">
-        <button class="btn-action" onclick="document.getElementById('folderInput').click()">Upload Folder</button>
-        <button id="checkUnfollowers" class="btn-action btn-unfollow" style="display:none">Find Unfollowers</button>
-        <div id="errorMessage" class="error"></div>
+    <div class="dashboard-header">
+        <h1 style="margin:0; font-size: 28px; letter-spacing: 2px; color: var(--accent);">InstaMOOZ Check</h1>
+        <p style="color: var(--text-dim); font-size: 13px; margin: 5px 0 0 0;">Futuristic Audience Relationship Engine</p>
+        
+        <input type="text" id="searchInput" class="search-box" placeholder="Target username scan...">
+        
+        <div class="btn-group">
+            <button class="btn-action" onclick="document.getElementById('folderInput').click()">Upload Folder</button>
+            <button id="btnUnfollowers" class="btn-action btn-unfollow" style="display:none">View Idols</button>
+            <button id="btnFans" class="btn-action btn-fans" style="display:none">View Fans</button>
+            <button id="btnMutual" class="btn-action btn-mutual" style="display:none">View Mutuals</button>
+            <button id="btnClear" class="btn-action btn-clear" style="display:none">Reset View</button>
+        </div>
+        <input type="file" id="folderInput" webkitdirectory directory multiple>
     </div>
 
     <div class="container">
         <div class="column">
-            <div class="header">Followers <span id="c-followers" class="count">0</span></div>
+            <div class="header-label">FOLLOWERS <span id="c-followers" class="count">0</span></div>
             <ul id="l-followers" class="list"></ul>
         </div>
         <div class="column">
-            <div class="header">Following <span id="c-following" class="count">0</span></div>
+            <div class="header-label">FOLLOWING <span id="c-following" class="count">0</span></div>
             <ul id="l-following" class="list"></ul>
         </div>
     </div>
@@ -119,69 +175,93 @@
         let followerList = [];
         let followingList = [];
 
+        function cleanFollowing(name) {
+            if (!name) return "";
+            let val = name.replace('u', ''); //
+            if (val.charAt(0) === '_') val = val.substring(1); //
+            return val;
+        }
+
         document.getElementById('folderInput').addEventListener('change', async (e) => {
             const files = Array.from(e.target.files);
             const fFiles = files.filter(f => f.name.toLowerCase().includes('follower') && f.name.endsWith('.html'));
             const gFiles = files.filter(f => f.name.toLowerCase().includes('following') && f.name.endsWith('.html'));
 
-            followerList = await extractAll(fFiles);
-            followingList = await extractAll(gFiles);
+            followerList = await extractAll(fFiles, false);
+            followingList = await extractAll(gFiles, true);
 
             render(followerList, 'l-followers', 'c-followers');
             render(followingList, 'l-following', 'c-following');
-            document.getElementById('checkUnfollowers').style.display = 'inline-block';
+            document.querySelectorAll('.btn-action').forEach(b => b.style.display = 'inline-block');
         });
 
-        async function extractAll(fileList) {
+        async function extractAll(fileList, shouldClean) {
             let names = new Set();
             for (const file of fileList) {
-                const text = await file.text();
-                const doc = new DOMParser().parseFromString(text, 'text/html');
-                
+                const doc = new DOMParser().parseFromString(await file.text(), 'text/html');
                 doc.querySelectorAll('a').forEach(a => {
                     const href = a.getAttribute('href');
-                    if (href && href.includes('instagram.com/')) {
+                    if (href?.includes('instagram.com/')) {
                         let user = href.split('instagram.com/')[1].replaceAll('/', '');
-                        
-                        // LOOP FIX: If first character is 'u', remove it.
-                        if (user.charAt(0) === 'u') {
-                            user = user.substring(1);
-                        }
-                        
-                        if (user) names.add(user);
+                        names.add(shouldClean ? cleanFollowing(user) : user);
                     }
                 });
-
                 if (names.size === 0) {
                     doc.querySelectorAll('div._a6-p, div._a706, td').forEach(el => {
                         let val = el.textContent.trim();
-                        if (val && !val.includes(' ')) {
-                            // LOOP FIX for text fallback
-                            if (val.charAt(0) === 'u') {
-                                val = val.substring(1);
-                            }
-                            names.add(val);
-                        }
+                        if (val && !val.includes(' ')) names.add(shouldClean ? cleanFollowing(val) : val);
                     });
                 }
             }
-            return Array.from(names).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+            return Array.from(names).sort();
         }
 
-        function render(data, listId, countId, highlightList = []) {
+        function render(data, listId, countId, statusMap = {}) {
             const list = document.getElementById(listId);
             document.getElementById(countId).innerText = data.length;
-            list.innerHTML = data.map(name => {
-                const isUnfollower = highlightList.includes(name);
-                return `<li class="item ${isUnfollower ? 'highlight' : ''}">${name}</li>`;
+            
+            const sortedData = [...data].sort((a, b) => {
+                const aStatus = statusMap[a] ? 1 : 0;
+                const bStatus = statusMap[b] ? 1 : 0;
+                return bStatus - aStatus; //
+            });
+
+            list.innerHTML = sortedData.map(name => {
+                const cssClass = statusMap[name] || '';
+                return `<li class="item ${cssClass}">@${name}</li>`;
             }).join('');
+            
+            list.scrollTop = 0; //
         }
 
-        document.getElementById('checkUnfollowers').addEventListener('click', () => {
-            // Find who you follow that DOES NOT follow you back
-            const unfollowers = followingList.filter(user => !followerList.includes(user));
-            render(followingList, 'l-following', 'c-following', unfollowers);
-            alert(`Found ${unfollowers.length} unfollowers.`);
+        document.getElementById('btnClear').addEventListener('click', () => {
+            render(followerList, 'l-followers', 'c-followers', {});
+            render(followingList, 'l-following', 'c-following', {});
+        });
+
+        document.getElementById('btnUnfollowers').addEventListener('click', () => {
+            let map = {};
+            followingList.forEach(u => { if(!followerList.includes(u)) map[u] = 'unfollower-card'; });
+            render(followingList, 'l-following', 'c-following', map); //
+        });
+
+        document.getElementById('btnFans').addEventListener('click', () => {
+            let map = {};
+            followerList.forEach(u => { if(!followingList.includes(u)) map[u] = 'fan-card'; });
+            render(followerList, 'l-followers', 'c-followers', map); //
+        });
+
+        document.getElementById('btnMutual').addEventListener('click', () => {
+            let map = {};
+            followingList.forEach(u => { if(followerList.includes(u)) map[u] = 'mutual-card'; });
+            render(followingList, 'l-following', 'c-following', map); //
+        });
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            document.querySelectorAll('.item').forEach(item => {
+                item.style.display = item.textContent.toLowerCase().includes(term) ? 'flex' : 'none'; //
+            });
         });
     </script>
 </body>
