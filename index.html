@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Connections | Final Pro</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --border: #334155;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --accent: #38bdf8;
+            --danger: #f43f5e;
+        }
+
+        * { box-sizing: border-box; transition: all 0.2s ease; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0; padding: 20px;
+            display: flex; flex-direction: column;
+            align-items: center; height: 100vh;
+            overflow: hidden;
+        }
+
+        .upload-card {
+            background: var(--card-bg);
+            padding: 20px 40px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            text-align: center; width: 100%;
+            max-width: 700px; margin-bottom: 20px;
+            flex-shrink: 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .btn-action {
+            background: var(--accent);
+            color: #000;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            margin: 10px 5px;
+            font-size: 14px;
+        }
+
+        .btn-unfollow { background: var(--danger); color: white; }
+
+        .container {
+            display: flex; gap: 20px;
+            width: 100%; max-width: 1100px;
+            flex-grow: 1; min-height: 0;
+            margin-bottom: 10px;
+        }
+
+        .column {
+            flex: 1; background: var(--card-bg);
+            border-radius: 16px; border: 1px solid var(--border);
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+
+        .header {
+            padding: 15px; background: rgba(255,255,255,0.05);
+            border-bottom: 1px solid var(--border);
+            font-weight: 700; text-align: center;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+
+        .count { background: var(--accent); color: #000; font-size: 11px; padding: 2px 8px; border-radius: 12px; }
+
+        .list { padding: 15px; margin: 0; list-style: none; overflow-y: auto; flex-grow: 1; }
+
+        .item {
+            padding: 10px 15px; margin-bottom: 6px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 8px; font-size: 13.5px;
+            border: 1px solid transparent;
+            display: flex; align-items: center;
+        }
+
+        .item::before { content: '@'; color: var(--accent); margin-right: 8px; opacity: 0.6; font-weight: bold; }
+
+        .item.highlight { 
+            border-color: var(--danger); 
+            background: rgba(244, 63, 94, 0.15); 
+        }
+
+        .error { color: var(--danger); display: none; padding: 10px; font-size: 13px; }
+    </style>
+</head>
+<body>
+
+    <div class="upload-card">
+        <h2 style="margin:0 0 10px 0;">Instagram Connections</h2>
+        <input type="file" id="folderInput" webkitdirectory directory multiple style="display:none">
+        <button class="btn-action" onclick="document.getElementById('folderInput').click()">Upload Folder</button>
+        <button id="checkUnfollowers" class="btn-action btn-unfollow" style="display:none">Find Unfollowers</button>
+        <div id="errorMessage" class="error"></div>
+    </div>
+
+    <div class="container">
+        <div class="column">
+            <div class="header">Followers <span id="c-followers" class="count">0</span></div>
+            <ul id="l-followers" class="list"></ul>
+        </div>
+        <div class="column">
+            <div class="header">Following <span id="c-following" class="count">0</span></div>
+            <ul id="l-following" class="list"></ul>
+        </div>
+    </div>
+
+    <script>
+        let followerList = [];
+        let followingList = [];
+
+        document.getElementById('folderInput').addEventListener('change', async (e) => {
+            const files = Array.from(e.target.files);
+            const fFiles = files.filter(f => f.name.toLowerCase().includes('follower') && f.name.endsWith('.html'));
+            const gFiles = files.filter(f => f.name.toLowerCase().includes('following') && f.name.endsWith('.html'));
+
+            followerList = await extractAll(fFiles);
+            followingList = await extractAll(gFiles);
+
+            render(followerList, 'l-followers', 'c-followers');
+            render(followingList, 'l-following', 'c-following');
+            document.getElementById('checkUnfollowers').style.display = 'inline-block';
+        });
+
+        async function extractAll(fileList) {
+            let names = new Set();
+            for (const file of fileList) {
+                const text = await file.text();
+                const doc = new DOMParser().parseFromString(text, 'text/html');
+                
+                doc.querySelectorAll('a').forEach(a => {
+                    const href = a.getAttribute('href');
+                    if (href && href.includes('instagram.com/')) {
+                        let user = href.split('instagram.com/')[1].replaceAll('/', '');
+                        
+                        // LOOP FIX: If first character is 'u', remove it.
+                        if (user.charAt(0) === 'u') {
+                            user = user.substring(1);
+                        }
+                        
+                        if (user) names.add(user);
+                    }
+                });
+
+                if (names.size === 0) {
+                    doc.querySelectorAll('div._a6-p, div._a706, td').forEach(el => {
+                        let val = el.textContent.trim();
+                        if (val && !val.includes(' ')) {
+                            // LOOP FIX for text fallback
+                            if (val.charAt(0) === 'u') {
+                                val = val.substring(1);
+                            }
+                            names.add(val);
+                        }
+                    });
+                }
+            }
+            return Array.from(names).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+        }
+
+        function render(data, listId, countId, highlightList = []) {
+            const list = document.getElementById(listId);
+            document.getElementById(countId).innerText = data.length;
+            list.innerHTML = data.map(name => {
+                const isUnfollower = highlightList.includes(name);
+                return `<li class="item ${isUnfollower ? 'highlight' : ''}">${name}</li>`;
+            }).join('');
+        }
+
+        document.getElementById('checkUnfollowers').addEventListener('click', () => {
+            // Find who you follow that DOES NOT follow you back
+            const unfollowers = followingList.filter(user => !followerList.includes(user));
+            render(followingList, 'l-following', 'c-following', unfollowers);
+            alert(`Found ${unfollowers.length} unfollowers.`);
+        });
+    </script>
+</body>
+</html>
