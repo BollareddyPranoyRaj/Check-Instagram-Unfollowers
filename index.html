@@ -202,32 +202,34 @@
         let followerList = [];
         let followingList = [];
 
-        function cleanFollowing(name) {
-            if (!name) return "";
-            let val = name.replace('u', ''); 
-            if (val.charAt(0) === '_') val = val.substring(1); 
-            return val;
+        function normalizeUsername(value) {
+            return value
+                .replace(/^@/, '')
+                .split('?')[0]
+                .split('/')[0]
+                .trim()
+                .toLowerCase();
         }
 
         document.getElementById('folderInput').addEventListener('change', async (e) => {
             const files = Array.from(e.target.files);
-            followerList = await extractAll(files.filter(f => f.name.includes('follower')), false);
-            followingList = await extractAll(files.filter(f => f.name.includes('following')), true);
+            followerList = await extractAll(files.filter(f => f.name.includes('follower')));
+            followingList = await extractAll(files.filter(f => f.name.includes('following')));
 
             render(followerList, 'l-followers', 'c-followers');
             render(followingList, 'l-following', 'c-following');
             document.querySelectorAll('.btn-action').forEach(b => b.style.display = 'inline-block');
         });
 
-        async function extractAll(fileList, shouldClean) {
+        async function extractAll(fileList) {
             let names = new Set();
             for (const file of fileList) {
                 const doc = new DOMParser().parseFromString(await file.text(), 'text/html');
                 doc.querySelectorAll('a').forEach(a => {
                     const href = a.getAttribute('href');
                     if (href?.includes('instagram.com/')) {
-                        let user = href.split('instagram.com/')[1].replaceAll('/', '');
-                        names.add(shouldClean ? cleanFollowing(user) : user);
+                        const user = normalizeUsername(href.split('instagram.com/')[1]);
+                        if (user) names.add(user);
                     }
                 });
             }
@@ -242,18 +244,24 @@
         }
 
         document.getElementById('btnUnfollowers').addEventListener('click', () => {
-            let map = {}; followingList.forEach(u => { if(!followerList.includes(u)) map[u] = 'unfollower-card'; });
-            render(followingList, 'l-following', 'c-following', map);
+            const followerSet = new Set(followerList);
+            const unfollowers = followingList.filter(u => !followerSet.has(u));
+            let map = {}; unfollowers.forEach(u => { map[u] = 'unfollower-card'; });
+            render(unfollowers, 'l-following', 'c-following', map);
         });
 
         document.getElementById('btnFans').addEventListener('click', () => {
-            let map = {}; followerList.forEach(u => { if(!followingList.includes(u)) map[u] = 'fan-card'; });
-            render(followerList, 'l-followers', 'c-followers', map);
+            const followingSet = new Set(followingList);
+            const fans = followerList.filter(u => !followingSet.has(u));
+            let map = {}; fans.forEach(u => { map[u] = 'fan-card'; });
+            render(fans, 'l-followers', 'c-followers', map);
         });
 
         document.getElementById('btnMutual').addEventListener('click', () => {
-            let map = {}; followingList.forEach(u => { if(followerList.includes(u)) map[u] = 'mutual-card'; });
-            render(followingList, 'l-following', 'c-following', map);
+            const followerSet = new Set(followerList);
+            const mutuals = followingList.filter(u => followerSet.has(u));
+            let map = {}; mutuals.forEach(u => { map[u] = 'mutual-card'; });
+            render(mutuals, 'l-following', 'c-following', map);
         });
 
         document.getElementById('btnClear').addEventListener('click', () => {
