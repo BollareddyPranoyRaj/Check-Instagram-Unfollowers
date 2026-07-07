@@ -39,7 +39,7 @@ Your data **never leaves your device**.
 ---
 
 ## 🔍 What You’ll See
-- **⭐ Idols** → You follow them, they don’t follow back  
+- **⭐ Unfollowers** → You follow them, they don’t follow back  
 - **❤️ Fans** → They follow you, you don’t follow back  
 - **🤝 Mutuals** → Both follow each other  
 
